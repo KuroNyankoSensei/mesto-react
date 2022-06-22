@@ -17,7 +17,7 @@ function App() {
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
-  const [currentUser, setCurrentUser] = React.useState("");
+  const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -83,13 +83,22 @@ function App() {
       .catch((err) => console.log(err));
   }
 
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard
+
   React.useEffect(() => {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
+    function closeByEscape(evt) {
+      if (evt.key === 'Escape') {
         closeAllPopups();
       }
-    });
-  }, []);
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen])
+
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
